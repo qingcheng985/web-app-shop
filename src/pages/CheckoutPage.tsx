@@ -1,34 +1,40 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link, Navigate } from 'react-router-dom'
 import { formatMoney } from '../data/catalog.ts'
 import { useShop } from '../context/ShopContext.tsx'
 
 export function CheckoutPage() {
+  const { t } = useTranslation()
   const shop = useShop()
   const [placed, setPlaced] = useState<{
     id: string
     total: number
-    region: string
+    regionId: string
     count: number
   } | null>(null)
 
   if (placed) {
     return (
       <div className="mx-auto max-w-xl px-4 py-20">
-        <p className="text-[11px] uppercase tracking-[0.2em] text-clay">Order {placed.id}</p>
+        <p className="text-[11px] uppercase tracking-[0.2em] text-clay">
+          {t('checkout.order', { id: placed.id })}
+        </p>
         <h1 className="mt-3 font-serif text-5xl leading-[0.95] tracking-[-0.04em]">
-          Packed for {placed.region}.
+          {t('checkout.packed', { region: t(`regions.${placed.regionId}.label`) })}
         </h1>
         <p className="mt-4 text-lg leading-relaxed text-mute">
-          This is a demo checkout. Nothing was charged. {placed.count}{' '}
-          {placed.count === 1 ? 'piece' : 'pieces'} · {formatMoney(placed.total)} USD, shipping
-          included in that total.
+          {t('checkout.done', {
+            count: placed.count,
+            unit: t('checkout.unit', { count: placed.count }),
+            total: formatMoney(placed.total),
+          })}
         </p>
         <Link
           to="/"
           className="mt-8 inline-flex min-h-11 items-center rounded-full bg-ink px-5 text-sm text-foam"
         >
-          Continue browsing
+          {t('checkout.continue')}
         </Link>
       </div>
     )
@@ -41,11 +47,11 @@ export function CheckoutPage() {
       <div>
         <p className="text-[11px] uppercase tracking-[0.2em] text-mute">
           <Link to="/cart" className="underline-offset-4 hover:underline">
-            Bag
+            {t('checkout.bag')}
           </Link>{' '}
-          / Review
+          / {t('checkout.reviewCrumb')}
         </p>
-        <h1 className="mt-3 font-serif text-5xl tracking-[-0.04em]">Review order</h1>
+        <h1 className="mt-3 font-serif text-5xl tracking-[-0.04em]">{t('checkout.title')}</h1>
         <ul className="mt-8 divide-y divide-line">
           {shop.lines.map((line) => (
             <li
@@ -53,9 +59,12 @@ export function CheckoutPage() {
               className="flex items-center justify-between gap-4 py-4"
             >
               <div>
-                <p className="font-serif text-2xl">{line.product.name}</p>
+                <p className="font-serif text-2xl">{t(`products.${line.product.id}.name`)}</p>
                 <p className="text-sm text-mute">
-                  {line.variant} · Qty {line.qty}
+                  {t('checkout.qty', {
+                    variant: t(`variants.${line.variant}`),
+                    qty: line.qty,
+                  })}
                 </p>
               </div>
               <p className="tabular-nums">{formatMoney(line.product.price * line.qty)}</p>
@@ -63,22 +72,26 @@ export function CheckoutPage() {
           ))}
         </ul>
         <p className="mt-6 max-w-lg text-sm leading-relaxed text-mute">
-          No account and no card. Placing the order only confirms the bag in this browser and
-          clears it. Ship to {shop.region.label}, {shop.region.window}.
+          {t('checkout.note', {
+            region: t(`regions.${shop.region.id}.label`),
+            window: t(`regions.${shop.region.id}.window`),
+          })}
         </p>
       </div>
       <aside className="h-fit rounded-[1.6rem] bg-foam p-5">
         <dl className="space-y-2 text-sm">
           <div className="flex justify-between">
-            <dt>Subtotal</dt>
+            <dt>{t('checkout.subtotal')}</dt>
             <dd className="tabular-nums">{formatMoney(shop.subtotal)}</dd>
           </div>
           <div className="flex justify-between">
-            <dt>Shipping</dt>
-            <dd className="tabular-nums">{shop.shipping === 0 ? 'Free' : formatMoney(shop.shipping)}</dd>
+            <dt>{t('checkout.shipping')}</dt>
+            <dd className="tabular-nums">
+              {shop.shipping === 0 ? t('checkout.free') : formatMoney(shop.shipping)}
+            </dd>
           </div>
           <div className="flex justify-between border-t border-line pt-3 font-serif text-2xl">
-            <dt>Total</dt>
+            <dt>{t('checkout.total')}</dt>
             <dd className="tabular-nums">{formatMoney(shop.total)}</dd>
           </div>
         </dl>
@@ -86,17 +99,16 @@ export function CheckoutPage() {
           type="button"
           className="mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-sage text-sm text-foam active:scale-[0.98]"
           onClick={() => {
-            const id = `NL-${Date.now().toString().slice(-6)}`
             setPlaced({
-              id,
+              id: `NL-${Date.now().toString().slice(-6)}`,
               total: shop.total,
-              region: shop.region.label,
+              regionId: shop.region.id,
               count: shop.count,
             })
             shop.clear()
           }}
         >
-          Place demo order
+          {t('checkout.place')}
         </button>
       </aside>
     </div>

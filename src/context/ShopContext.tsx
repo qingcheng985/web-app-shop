@@ -22,10 +22,12 @@ export type CartLine = {
 
 export type DetailedLine = CartLine & { product: Product }
 
+type Notice = { productId: string; variant: string }
+
 type State = {
   lines: CartLine[]
   region: RegionId
-  notice: string | null
+  notice: Notice | null
 }
 
 type Action =
@@ -80,11 +82,10 @@ function reducer(state: State, action: Action): State {
             ...state.lines,
             { productId: action.productId, variant: action.variant, qty: action.qty },
           ]
-      const product = getProduct(action.productId)
       return {
         ...state,
         lines,
-        notice: product ? `Added ${product.name} · ${action.variant}` : 'Added to bag',
+        notice: { productId: action.productId, variant: action.variant },
       }
     }
     case 'setQty': {
@@ -126,7 +127,7 @@ function reducer(state: State, action: Action): State {
 type ShopValue = {
   lines: DetailedLine[]
   region: ReturnType<typeof regionById>
-  notice: string | null
+  notice: Notice | null
   count: number
   subtotal: number
   shipping: number
