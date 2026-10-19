@@ -53,13 +53,13 @@ npm run preview
 
 ## 部署到 GitHub Pages
 
-推到 `main` 后，GitHub Actions（`.github/workflows/pages.yml`）会构建并发布。
+推到 `main` 后，Actions 会构建并把 `dist` 发到 `gh-pages` 分支。
 
 线上地址：https://qingcheng985.github.io/web-app-shop/
 
-仓库只需确认一次：Settings → Pages → Build and deployment → Source 选 **GitHub Actions**。
+仓库确认一次即可：Settings → Pages → Source 选 **Deploy from a branch**，Branch 选 `gh-pages` / `/ (root)`。
 
-构建时 `VITE_BASE=/web-app-shop/`，本地 `npm run dev` 仍然是站点根路径。详情页和购物袋刷新走 `public/404.html`：先记住所访问的地址，再回到首页，由应用把地址还原。
+构建时 `VITE_BASE=/web-app-shop/`。详情页和购物袋刷新走 `public/404.html`。
 
 ## 技术栈（给同学看的）
 
