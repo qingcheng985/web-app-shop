@@ -1,68 +1,69 @@
 # Northline
 
-面向海外消费者的选购站，支持中英文切换。浏览商品、按条件缩小范围、查看规格、放入购物袋，并完成一次模拟下单。价格为美元，配送地区只影响展示用运费。
+这是一个给「50 分钟内能讲清楚」准备的前端演示店：海外旅行向选购站，英文为主、中文为辅。你打开就能逛，不用起后端。
 
-## 技术栈
+## 你演示时走哪条线
 
-- TypeScript
-- React 19（函数组件、Hooks）
-- Vite
-- React Router
-- Tailwind CSS v4（`@tailwindcss/vite`）
-- i18next + react-i18next（中英文，语言存在 `localStorage`）
-- 状态：React Context + `useReducer`
-- 持久化：`localStorage`（购物袋、配送地区、语言）
-- 数据：`src/data/catalog.ts` 静态商品，文案在 `src/i18n/en.ts` 与 `src/i18n/zh.ts`，图片来自 Unsplash
+别铺开讲评价、推荐、账号。就走这条主路径就够了：
 
-没有后端、登录和真实支付。
+1. **找到商品** — 首页搜一下、筛分类/价格，点进详情  
+2. **看规格** — 选颜色、改数量  
+3. **进购物袋** — 改数量、换配送地区，看运费怎么变  
+4. **演示确认** — 点「提交演示订单」，证明流程走完了；**不接支付 SDK**，也不收卡号
 
-## 启动
+购物袋、配送地区、语言都存在浏览器 `localStorage` 里，刷新不会丢。换语言时规格用的是稳定 key（比如 `Sand`），购物车不会因为文案变了就对不上。
+
+## 为什么这么砍
+
+| 我们做了 | 我们故意没做 |
+| --- | --- |
+| 静态商品 + 本地购物车 | 评价、推荐、登录注册 |
+| 满 $75 免运费的展示规则 | 真物流 / 关税计算 |
+| 中英文界面 | 支付、订单后台 |
+| Tailwind 自己排的编辑向旅行风 | 套现成商城模板 |
+
+全前端静态数据，就是为了：装依赖、跑起来、录屏或现场点一遍，都还来得及。文案维护成本会高一点（每种语言一份），但换语言不影响购物车一致性，演示时更稳。
+
+## 怎么在本机跑
 
 ```bash
 npm install
 npm run dev
 ```
 
-生产构建：
+浏览器打开 `http://localhost:8888`。要看生产包：
 
 ```bash
 npm run build
 npm run preview
 ```
 
-开发服务器：`http://localhost:8888`
+## 时间紧怎么交差
 
-## 部署到 Vercel
+**本地演示 + 录屏就够交差。** 按上面主路径点一遍，中英文各切一次，窄屏看一下手机底栏购物袋入口。
 
-1. 打开 [vercel.com](https://vercel.com)，用 GitHub 登录。
-2. Import 仓库 `qingcheng985/web-app-shop`。
-3. 保持默认：Framework = Vite，Build = `npm run build`，Output = `dist`。
-4. Deploy。仓库根目录的 `vercel.json` 已配置 SPA 路由回退。
+线上部署是加分项：源码和构建已经就绪。有空再发；没空就 README 留着，别人（或你自己）按下面一键发也行。
 
-线上验证：打开首页 → 进入商品详情并刷新 → 加入购物袋 → 模拟下单。
+## 想部署到 Vercel（加分）
 
-## 已完成
+1. 打开 [vercel.com](https://vercel.com)，用 GitHub 登录  
+2. Import 这个仓库  
+3. 默认就行：Framework = Vite，Build = `npm run build`，Output = `dist`  
+4. Deploy  
 
-- 商品列表：关键词搜索、分类、价格区间、排序、空状态
-- 商品详情：颜色规格、数量、加入购物袋、按地区展示配送说明
-- 购物袋：改数量、删除、小计、满 $75 免运费、地区切换
-- 模拟结算：只确认订单，不收集卡号
-- 桌面与手机布局：手机底部有购物袋入口
-- 刷新后购物袋和配送地区仍在
-- 中英文：页头可切换；商品名、规格、地区与界面文案会一起切换；购物袋用稳定的规格 key，换语言不会丢项
+根目录有 `vercel.json`，已经写好 SPA 回退，直接打开 `/product/...` 或 `/cart` 刷新也不会 404。
 
-## 验证
+## 技术栈（给同学看的）
 
-本地 `npm run build` 通过。界面需要在浏览器里再走一遍：切换中英文、搜索、筛选、详情加购、改数量、切换地区、模拟下单，以及窄屏宽度。
+- React 19 + Vite + TypeScript  
+- React Router  
+- Tailwind CSS v4（`@tailwindcss/vite`）  
+- i18next（`src/i18n/en.ts` / `zh.ts`）  
+- Context + `useReducer` 管购物袋；`localStorage` 持久化  
+- 商品在 `src/data/catalog.ts`，图用 Unsplash
 
-## 已知问题
+## 已知坑
 
-- 商品图依赖 Unsplash，离线或被拦截时图片会空。
-- 运费和关税是展示规则，不是真实物流计算。
-- 直接打开生产环境的 `/product/...` 或 `/cart` 需要静态托管把所有路径回退到 `index.html`。仓库里的 `vercel.json` 已写好这条规则。
-
-## 取舍
-
-- 先保证找到商品、看规格、进购物袋这条路径，在两种屏幕下都能用。
-- 结算只做到演示确认，不接支付。
-- 样式全部用 Tailwind，自己排版，不用商城模板。
+- 没网或 Unsplash 被拦时，商品图会空  
+- 运费、关税只是演示文案，不是真实报价  
+- 若换成别的静态托管，记得所有路径都回退到 `index.html`（Vercel 已经配好了）

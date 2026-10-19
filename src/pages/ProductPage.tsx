@@ -19,8 +19,10 @@ function ProductPage() {
 
   if (!product) {
     return (
-      <div className="mx-auto max-w-xl px-4 py-24 text-center">
-        <p className="font-serif text-4xl tracking-[-0.03em]">{t('product.missing')}</p>
+      <div className="mx-auto max-w-xl px-4 py-16 text-center sm:py-24">
+        <p className="break-words font-serif text-3xl tracking-[-0.03em] sm:text-4xl">
+          {t('product.missing')}
+        </p>
         <Link to="/" className="mt-6 inline-flex min-h-11 items-center text-clay underline">
           {t('product.back')}
         </Link>
@@ -32,24 +34,26 @@ function ProductPage() {
   const name = t(`products.${product.id}.name`)
 
   return (
-    <div className="mx-auto grid max-w-6xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:py-12">
-      <div className="overflow-hidden rounded-[1.8rem] bg-[#e7e0d6] lg:sticky lg:top-28 lg:self-start">
+    <div className="mx-auto grid max-w-6xl gap-6 px-4 py-6 sm:gap-8 sm:px-6 sm:py-8 lg:grid-cols-2 lg:gap-16 lg:py-12">
+      <div className="overflow-hidden rounded-2xl bg-[#e7e0d6] sm:rounded-[1.8rem] lg:sticky lg:top-28 lg:self-start">
         <img src={product.image} alt={name} className="aspect-[4/5] w-full object-cover" />
       </div>
-      <div className="pb-24 lg:py-6">
+      <div className="min-w-0 pb-28 lg:py-6 lg:pb-6">
         <Link to="/" className="text-[11px] uppercase tracking-[0.18em] text-mute">
           {t(`categories.${product.category}`)}
         </Link>
-        <h1 className="mt-3 font-serif text-5xl leading-[0.95] tracking-[-0.04em] sm:text-6xl">
+        <h1 className="mt-3 break-words font-serif text-[2.5rem] leading-[1.05] tracking-[-0.04em] sm:text-5xl sm:leading-[0.95] md:text-6xl">
           {name}
         </h1>
-        <p className="mt-4 font-serif text-3xl tabular-nums">{formatMoney(product.price)}</p>
-        <p className="mt-5 max-w-md text-lg leading-relaxed text-mute">
+        <p className="mt-3 font-serif text-2xl tabular-nums sm:mt-4 sm:text-3xl">
+          {formatMoney(product.price)}
+        </p>
+        <p className="mt-4 max-w-md text-base leading-relaxed text-mute sm:mt-5 sm:text-lg">
           {t(`products.${product.id}.blurb`)}
         </p>
         <p className="mt-3 max-w-md leading-relaxed">{t(`products.${product.id}.details`)}</p>
 
-        <fieldset className="mt-8">
+        <fieldset className="mt-7 sm:mt-8">
           <legend className="text-[11px] uppercase tracking-[0.18em] text-mute">
             {t('product.color', { name: t(`variants.${selected.key}`) })}
           </legend>
@@ -74,26 +78,14 @@ function ProductPage() {
           </div>
         </fieldset>
 
-        <div className="mt-6 flex flex-wrap items-center gap-3">
-          <div className="inline-flex min-h-11 items-center rounded-full bg-foam">
-            <button
-              type="button"
-              className="grid h-11 w-11 place-items-center"
-              onClick={() => setQty((value) => Math.max(1, value - 1))}
-              aria-label={t('product.decrease')}
-            >
-              −
-            </button>
-            <span className="w-8 text-center tabular-nums">{qty}</span>
-            <button
-              type="button"
-              className="grid h-11 w-11 place-items-center"
-              onClick={() => setQty((value) => Math.min(9, value + 1))}
-              aria-label={t('product.increase')}
-            >
-              +
-            </button>
-          </div>
+        <div className="mt-6 hidden flex-wrap items-center gap-3 sm:flex">
+          <QtyControl
+            qty={qty}
+            decreaseLabel={t('product.decrease')}
+            increaseLabel={t('product.increase')}
+            onDecrease={() => setQty((value) => Math.max(1, value - 1))}
+            onIncrease={() => setQty((value) => Math.min(9, value + 1))}
+          />
           <button
             type="button"
             onClick={() => add(product.id, selected.key, qty)}
@@ -111,6 +103,61 @@ function ProductPage() {
           })}
         </p>
       </div>
+
+      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-foam/95 px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md sm:hidden">
+        <div className="mx-auto flex max-w-6xl items-center gap-2">
+          <QtyControl
+            qty={qty}
+            decreaseLabel={t('product.decrease')}
+            increaseLabel={t('product.increase')}
+            onDecrease={() => setQty((value) => Math.max(1, value - 1))}
+            onIncrease={() => setQty((value) => Math.min(9, value + 1))}
+          />
+          <button
+            type="button"
+            onClick={() => add(product.id, selected.key, qty)}
+            className="inline-flex min-h-12 min-w-0 flex-1 items-center justify-center rounded-full bg-ink px-4 text-sm text-foam active:scale-[0.98]"
+          >
+            {t('product.add')} · {formatMoney(product.price)}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function QtyControl({
+  qty,
+  decreaseLabel,
+  increaseLabel,
+  onDecrease,
+  onIncrease,
+}: {
+  qty: number
+  decreaseLabel: string
+  increaseLabel: string
+  onDecrease: () => void
+  onIncrease: () => void
+}) {
+  return (
+    <div className="inline-flex min-h-11 shrink-0 items-center rounded-full bg-paper sm:bg-foam">
+      <button
+        type="button"
+        className="grid h-11 w-10 place-items-center sm:w-11"
+        onClick={onDecrease}
+        aria-label={decreaseLabel}
+      >
+        −
+      </button>
+      <span className="w-7 text-center tabular-nums sm:w-8">{qty}</span>
+      <button
+        type="button"
+        className="grid h-11 w-10 place-items-center sm:w-11"
+        onClick={onIncrease}
+        aria-label={increaseLabel}
+      >
+        +
+      </button>
     </div>
   )
 }

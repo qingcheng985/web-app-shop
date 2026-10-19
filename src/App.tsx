@@ -6,9 +6,11 @@ import { CheckoutPage } from './pages/CheckoutPage.tsx'
 import { ProductRoute } from './pages/ProductPage.tsx'
 import { Shell } from './Shell.tsx'
 
+const routerBasename = import.meta.env.BASE_URL.replace(/\/$/, '') || undefined
+
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={routerBasename}>
       <ShopProvider>
         <Routes>
           <Route element={<Shell />}>

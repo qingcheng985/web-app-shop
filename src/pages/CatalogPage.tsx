@@ -75,39 +75,41 @@ export function CatalogPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 pb-28 pt-8 sm:px-6 sm:pt-12">
-      <section className="grid items-end gap-8 border-b border-line pb-10 md:grid-cols-[1.35fr_0.75fr]">
-        <div>
+    <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6 sm:pt-12">
+      <section className="grid items-end gap-6 border-b border-line pb-8 md:grid-cols-[1.35fr_0.75fr] md:gap-8 md:pb-10">
+        <div className="min-w-0">
           <p className="text-[11px] uppercase tracking-[0.22em] text-clay">{t('hero.eyebrow')}</p>
-          <h1 className="mt-3 max-w-xl font-serif text-[3.1rem] leading-[0.92] tracking-[-0.04em] sm:text-7xl">
+          <h1 className="mt-3 max-w-xl break-words font-serif text-[2.35rem] leading-[1.05] tracking-[-0.04em] sm:text-[3.1rem] sm:leading-[0.92] md:text-7xl">
             {t('hero.titleLine1')}
             <br />
             {t('hero.titleLine2')}
           </h1>
-          <p className="mt-5 max-w-md text-lg leading-relaxed text-mute">
+          <p className="mt-4 max-w-md text-base leading-relaxed text-mute sm:mt-5 sm:text-lg">
             {t('hero.lead', { amount: formatMoney(FREE_SHIPPING_AT) })}
           </p>
         </div>
-        <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-[1.6rem] bg-line text-sm">
+        <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-line text-sm sm:rounded-[1.6rem]">
           {[
             [t('facts.currency'), t('facts.currencyValue')],
             [t('facts.freeShip'), formatMoney(FREE_SHIPPING_AT)],
             [t('facts.returns'), t('facts.returnsValue')],
             [t('facts.duties'), t('facts.dutiesValue')],
           ].map(([label, value]) => (
-            <div key={label} className="bg-foam px-4 py-4">
-              <dt className="text-[11px] uppercase tracking-[0.16em] text-mute">{label}</dt>
-              <dd className="mt-1 font-serif text-2xl tracking-[-0.03em]">{value}</dd>
+            <div key={label} className="bg-foam px-3 py-3 sm:px-4 sm:py-4">
+              <dt className="text-[10px] uppercase tracking-[0.16em] text-mute sm:text-[11px]">{label}</dt>
+              <dd className="mt-1 break-words font-serif text-xl tracking-[-0.03em] sm:text-2xl">
+                {value}
+              </dd>
             </div>
           ))}
         </dl>
       </section>
 
-      <div className="mt-8 grid gap-8 lg:grid-cols-[13rem_1fr] lg:gap-12">
-        <aside className="flex flex-col gap-6">
-          <div>
+      <div className="mt-6 grid gap-6 lg:mt-8 lg:grid-cols-[13rem_1fr] lg:gap-12">
+        <aside className="flex min-w-0 flex-col gap-4 sm:gap-6">
+          <div className="min-w-0">
             <p className="text-[11px] uppercase tracking-[0.18em] text-mute">{t('filters.category')}</p>
-            <div className="mt-3 flex gap-2 overflow-x-auto pb-1 lg:flex-col">
+            <div className="chip-scroll mt-3 lg:flex-col lg:overflow-visible">
               <FilterButton active={category === 'all'} onClick={() => setParam('cat', 'all')}>
                 {t('filters.all')}
               </FilterButton>
@@ -122,9 +124,9 @@ export function CatalogPage() {
               ))}
             </div>
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-[11px] uppercase tracking-[0.18em] text-mute">{t('filters.price')}</p>
-            <div className="mt-3 flex gap-2 overflow-x-auto pb-1 lg:flex-col">
+            <div className="chip-scroll mt-3 lg:flex-col lg:overflow-visible">
               {priceIds.map((item) => (
                 <FilterButton
                   key={item}
@@ -138,18 +140,18 @@ export function CatalogPage() {
           </div>
         </aside>
 
-        <section>
-          <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+        <section className="min-w-0">
+          <div className="mb-5 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
             <p className="text-sm text-mute">
               {t('catalog.count', { count: visible.length })}
               {query ? t('catalog.forQuery', { query: params.get('q') }) : ''}
             </p>
-            <label className="text-sm text-mute">
-              {t('sort.label')}
+            <label className="flex items-center gap-2 text-sm text-mute">
+              <span className="shrink-0">{t('sort.label')}</span>
               <select
                 value={sort}
                 onChange={(event) => setParam('sort', event.target.value)}
-                className="ml-2 min-h-11 rounded-full bg-foam px-3 text-ink"
+                className="min-h-11 min-w-0 flex-1 rounded-full bg-foam px-3 text-ink sm:flex-none"
               >
                 {sortIds.map((item) => (
                   <option key={item} value={item}>
@@ -173,7 +175,7 @@ export function CatalogPage() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-x-5 gap-y-10 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-12 xl:grid-cols-3">
               {visible.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

@@ -8,7 +8,9 @@ export function Shell() {
   const { t, i18n } = useTranslation()
   const { notice, count } = useShop()
   const { pathname } = useLocation()
-  const showBagBar = count > 0 && pathname !== '/cart' && pathname !== '/checkout'
+  const onProduct = pathname.startsWith('/product/')
+  const showBagBar =
+    count > 0 && pathname !== '/cart' && pathname !== '/checkout' && !onProduct
 
   useEffect(() => {
     document.title = t('meta.title')
@@ -22,25 +24,33 @@ export function Shell() {
     : null
 
   return (
-    <div className="min-h-[100dvh]">
+    <div className="min-h-[100dvh] overflow-x-clip">
       <Header />
-      <main>
+      <main className={showBagBar ? 'pb-[calc(5.5rem+env(safe-area-inset-bottom))]' : ''}>
         <Outlet />
       </main>
-      <footer className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-10 text-sm text-mute sm:flex-row sm:justify-between sm:px-6">
+      <footer
+        className={`mx-auto flex max-w-6xl flex-col gap-2 px-4 py-8 text-sm text-mute sm:flex-row sm:justify-between sm:px-6 sm:py-10 ${
+          showBagBar ? 'pb-[calc(6.5rem+env(safe-area-inset-bottom))] sm:pb-10' : 'pb-[max(2rem,env(safe-area-inset-bottom))]'
+        }`}
+      >
         <p className="font-serif text-xl text-ink">Northline</p>
-        <p>{t('footer')}</p>
+        <p className="leading-relaxed break-words">{t('footer')}</p>
       </footer>
       {noticeText && (
         <div
           role="status"
-          className="fixed bottom-24 left-1/2 z-40 -translate-x-1/2 rounded-full bg-ink px-4 py-3 text-sm text-foam shadow-[0_16px_40px_-20px_rgba(26,23,20,0.8)] sm:bottom-8"
+          className={`fixed left-1/2 z-40 max-w-[min(92vw,24rem)] -translate-x-1/2 rounded-full bg-ink px-4 py-3 text-center text-sm text-foam shadow-[0_16px_40px_-20px_rgba(26,23,20,0.8)] ${
+            showBagBar
+              ? 'bottom-[calc(4.75rem+env(safe-area-inset-bottom))]'
+              : 'bottom-[max(1.5rem,env(safe-area-inset-bottom))]'
+          }`}
         >
           {noticeText}
         </div>
       )}
       {showBagBar && (
-        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-foam/95 p-3 backdrop-blur-md sm:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-foam/95 px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md sm:hidden">
           <Link
             to="/cart"
             className="flex min-h-12 items-center justify-between rounded-full bg-ink px-5 text-sm text-foam"
